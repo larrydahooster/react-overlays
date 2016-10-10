@@ -1,6 +1,6 @@
 {
   "name": "@larrydahooster/react-overlays-fork",
-  "version": "0.6.10",
+  "version": "0.7.0",
   "description": "Utilities for creating robust overlay components",
   "author": "Jason Quense <monastic.panic@gmail.com>",
   "repository": "larrydahooster/react-overlays",
