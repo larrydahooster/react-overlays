@@ -60,7 +60,7 @@ describe('Modal', function () {
 
     let instance = render(<Container />, mountPoint);
     let modal = ReactTestUtils.findRenderedComponentWithType(instance, Modal);
-    let backdrop = modal.refs.backdrop;
+    let backdrop = modal.backdrop;
 
     expect($(instance).css('overflow')).to.equal('hidden');
 
@@ -95,7 +95,7 @@ describe('Modal', function () {
 
     let instance = render(<Container />, mountPoint);
     let modal = ReactTestUtils.findRenderedComponentWithType(instance, Modal);
-    let backdrop = modal.refs.backdrop;
+    let backdrop = modal.backdrop;
 
     expect($(instance).hasClass('test test2')).to.be.true;
 
@@ -112,7 +112,7 @@ describe('Modal', function () {
       </Modal>
     , mountPoint);
 
-    let backdrop = instance.refs.backdrop;
+    let backdrop = instance.backdrop;
 
     ReactTestUtils.Simulate.click(backdrop);
 
@@ -127,7 +127,7 @@ describe('Modal', function () {
       </Modal>
     , mountPoint);
 
-    let backdrop = instance.refs.backdrop;
+    let backdrop = instance.backdrop;
 
     ReactTestUtils.Simulate.click(backdrop);
   });
@@ -140,7 +140,7 @@ describe('Modal', function () {
       </Modal>
     , mountPoint);
 
-    let backdrop = instance.refs.backdrop;
+    let backdrop = instance.backdrop;
 
     ReactTestUtils.Simulate.click(backdrop);
 
@@ -155,7 +155,7 @@ describe('Modal', function () {
       </Modal>
     , mountPoint);
 
-    let backdrop = instance.refs.backdrop;
+    let backdrop = instance.backdrop;
 
     simulant.fire(backdrop, 'keyup', { keyCode: 27 });
   });
@@ -169,7 +169,7 @@ describe('Modal', function () {
       </Modal>
     , mountPoint);
 
-    let backdrop = instance.refs.backdrop;
+    let backdrop = instance.backdrop;
 
     expect(
       backdrop.style.borderWidth).to.equal('3px');
@@ -183,7 +183,7 @@ describe('Modal', function () {
           <strong>Message</strong>
         </Modal>
       , mountPoint);
-    }).to.throw(/onlyChild must be passed a children with exactly one child/);
+    }).to.throw(/expected to receive a single React element child/);
   });
 
   it('Should add role to child', function () {
@@ -348,8 +348,7 @@ describe('Modal', function () {
       document.activeElement.should.equal(input);
     });
 
-    it('Should return focus to the modal', function () {
-
+    it('Should return focus to the modal', () => {
       document.activeElement.should.equal(focusableContainer);
 
       render(
@@ -360,7 +359,9 @@ describe('Modal', function () {
         </Modal>
         , focusableContainer);
 
+
       focusableContainer.focus();
+
       document.activeElement.className.should.contain('modal');
     });
 

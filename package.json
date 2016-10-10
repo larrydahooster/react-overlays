@@ -1,6 +1,6 @@
 {
   "name": "@larrydahooster/react-overlays-fork",
-  "version": "0.6.6",
+  "version": "0.6.10",
   "description": "Utilities for creating robust overlay components",
   "author": "Jason Quense <monastic.panic@gmail.com>",
   "repository": "larrydahooster/react-overlays",
@@ -56,8 +56,8 @@
     "eslint-plugin-react": "^5.2.2",
     "isparta-loader": "^2.0.0",
     "jquery": "^3.1.0",
-    "karma": "^1.1.1",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
     "karma-cli": "^1.0.1",
     "karma-coverage": "^1.1.0",
     "karma-coveralls": "^1.1.2",
