@@ -1,19 +1,21 @@
 /*eslint-disable react/prop-types */
+
+import activeElement from 'dom-helpers/activeElement';
+import contains from 'dom-helpers/query/contains';
+import canUseDom from 'dom-helpers/util/inDOM';
+import PropTypes from 'prop-types';
+import componentOrElement from 'prop-types-extra/lib/componentOrElement';
+import elementType from 'prop-types-extra/lib/elementType';
 import React, { cloneElement } from 'react';
 import warning from 'warning';
-import componentOrElement from 'react-prop-types/lib/componentOrElement';
-import elementType from 'react-prop-types/lib/elementType';
 
 import Portal from './Portal';
 import ModalManager from './ModalManager';
 
-import ownerDocument from './utils/ownerDocument';
 import addEventListener from './utils/addEventListener';
 import addFocusListener from './utils/addFocusListener';
-import canUseDom from 'dom-helpers/util/inDOM';
-import activeElement from 'dom-helpers/activeElement';
-import contains from 'dom-helpers/query/contains';
 import getContainer from './utils/getContainer';
+import ownerDocument from './utils/ownerDocument';
 
 let modalManager = new ModalManager();
 
@@ -37,15 +39,15 @@ let modalManager = new ModalManager();
  * a Modal to be truly modal, it should have a `container` that is _outside_ your app's
  * React hierarchy (such as the default: document.body).
  */
-const Modal = React.createClass({
+class Modal extends React.Component {
 
-  propTypes: {
+  static propTypes = {
     ...Portal.propTypes,
 
     /**
      * Set the visibility of the Modal
      */
-    show: React.PropTypes.bool,
+    show: PropTypes.bool,
 
     /**
      * A Node, Component instance, or function that returns either. The Modal is appended to it's container element.
@@ -53,15 +55,15 @@ const Modal = React.createClass({
      * For the sake of assistive technologies, the container should usually be the document body, so that the rest of the
      * page content can be placed behind a virtual backdrop as well as a visual one.
      */
-    container: React.PropTypes.oneOfType([
+    container: PropTypes.oneOfType([
       componentOrElement,
-      React.PropTypes.func
+      PropTypes.func
     ]),
 
     /**
      * A callback fired when the Modal is opening.
      */
-    onShow: React.PropTypes.func,
+    onShow: PropTypes.func,
 
     /**
      * A callback fired when either the backdrop is clicked, or the escape key is pressed.
@@ -69,14 +71,14 @@ const Modal = React.createClass({
      * The `onHide` callback only signals intent from the Modal,
      * you must actually set the `show` prop to `false` for the Modal to close.
      */
-    onHide: React.PropTypes.func,
+    onHide: PropTypes.func,
 
     /**
      * Include a backdrop component.
      */
-    backdrop: React.PropTypes.oneOfType([
-      React.PropTypes.bool,
-      React.PropTypes.oneOf(['static'])
+    backdrop: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.oneOf(['static'])
     ]),
 
     /**
@@ -87,38 +89,38 @@ const Modal = React.createClass({
      *  renderBackdrop={props => <MyBackdrop {...props} />}
      * ```
      */
-    renderBackdrop: React.PropTypes.func,
+    renderBackdrop: PropTypes.func,
 
     /**
      * A callback fired when the escape key, if specified in `keyboard`, is pressed.
      */
-    onEscapeKeyUp: React.PropTypes.func,
+    onEscapeKeyUp: PropTypes.func,
 
     /**
      * A callback fired when the backdrop, if specified, is clicked.
      */
-    onBackdropClick: React.PropTypes.func,
+    onBackdropClick: PropTypes.func,
 
     /**
      * A style object for the backdrop component.
      */
-    backdropStyle: React.PropTypes.object,
+    backdropStyle: PropTypes.object,
 
     /**
      * A css class or classes for the backdrop component.
      */
-    backdropClassName: React.PropTypes.string,
+    backdropClassName: PropTypes.string,
 
     /**
      * A css class or set of classes applied to the modal container when the modal is open,
      * and removed when it is closed.
      */
-    containerClassName: React.PropTypes.string,
+    containerClassName: PropTypes.string,
 
     /**
      * Close the modal when escape key is pressed
      */
-    keyboard: React.PropTypes.bool,
+    keyboard: PropTypes.bool,
 
     /**
      * A `<Transition/>` component to use for the dialog and backdrop components.
@@ -131,7 +133,7 @@ const Modal = React.createClass({
      *
      * See the Transition `timeout` prop for more infomation.
      */
-    dialogTransitionTimeout: React.PropTypes.number,
+    dialogTransitionTimeout: PropTypes.number,
 
     /**
      * The `timeout` of the backdrop transition if specified. This number is used to
@@ -139,7 +141,7 @@ const Modal = React.createClass({
      *
      * See the Transition `timeout` prop for more infomation.
      */
-    backdropTransitionTimeout: React.PropTypes.number,
+    backdropTransitionTimeout: PropTypes.number,
 
     /**
      * When `true` The modal will automatically shift focus to itself when it opens, and
@@ -149,7 +151,7 @@ const Modal = React.createClass({
      * Generally this should never be set to `false` as it makes the Modal less
      * accessible to assistive technologies, like screen readers.
      */
-    autoFocus: React.PropTypes.bool,
+    autoFocus: PropTypes.bool,
 
     /**
      * When `true` The modal will prevent focus from leaving the Modal while open.
@@ -157,63 +159,77 @@ const Modal = React.createClass({
      * Generally this should never be set to `false` as it makes the Modal less
      * accessible to assistive technologies, like screen readers.
      */
-    enforceFocus: React.PropTypes.bool,
+    enforceFocus: PropTypes.bool,
+
+    /**
+     * When `true` The modal will restore focus to previously focused element once
+     * modal is hidden
+     */
+    restoreFocus: PropTypes.bool,
 
     /**
      * Callback fired before the Modal transitions in
      */
-    onEnter: React.PropTypes.func,
+    onEnter: PropTypes.func,
 
     /**
      * Callback fired as the Modal begins to transition in
      */
-    onEntering: React.PropTypes.func,
+    onEntering: PropTypes.func,
 
     /**
      * Callback fired after the Modal finishes transitioning in
      */
-    onEntered: React.PropTypes.func,
+    onEntered: PropTypes.func,
 
     /**
      * Callback fired right before the Modal transitions out
      */
-    onExit: React.PropTypes.func,
+    onExit: PropTypes.func,
 
     /**
      * Callback fired as the Modal begins to transition out
      */
-    onExiting: React.PropTypes.func,
+    onExiting: PropTypes.func,
 
     /**
      * Callback fired after the Modal finishes transitioning out
      */
-    onExited: React.PropTypes.func,
+    onExited: PropTypes.func,
 
     /**
      * A ModalManager instance used to track and manage the state of open
      * Modals. Useful when customizing how modals interact within a container
      */
-    manager: React.PropTypes.object.isRequired,
-  },
+    manager: PropTypes.object.isRequired,
+  }
 
-  getDefaultProps() {
-    let noop = ()=>{};
+  static defaultProps = {
+    show: false,
+    backdrop: true,
+    keyboard: true,
+    autoFocus: true,
+    enforceFocus: true,
+    restoreFocus: true,
+    onHide: ()=>{},
+    manager: modalManager,
+    renderBackdrop: (props) => <div {...props} />
+  };
 
-    return {
-      show: false,
-      backdrop: true,
-      keyboard: true,
-      autoFocus: true,
-      enforceFocus: true,
-      onHide: noop,
-      manager: modalManager,
-      renderBackdrop: (props) => <div {...props} />
-    };
-  },
+  omitProps(props, propTypes) {
 
-  getInitialState(){
-    return {exited: !this.props.show};
-  },
+    const keys = Object.keys(props);
+    const newProps = {};
+    keys.map((prop) => {
+      if (!Object.prototype.hasOwnProperty.call(propTypes, prop)) {
+        newProps[prop] = props[prop];
+      }
+    });
+
+    return newProps;
+  }
+
+  state = {exited: !this.props.show};
 
   render() {
     const {
@@ -233,6 +249,7 @@ const Modal = React.createClass({
     } = this.props;
 
     let dialog = React.Children.only(children);
+    const filteredProps = this.omitProps(this.props, Modal.propTypes)
 
     const mountModal = show || (Transition && !this.state.exited);
     if (!mountModal) {
@@ -273,8 +290,9 @@ const Modal = React.createClass({
         container={container}
       >
         <div
-          ref={'modal'}
+          ref={this.setModalNode}
           role={role || 'dialog'}
+          {...filteredProps}
           style={style}
           className={className}
         >
@@ -283,9 +301,9 @@ const Modal = React.createClass({
         </div>
       </Portal>
     );
-  },
+  }
 
-  renderBackdrop() {
+  renderBackdrop = () => {
     let {
       backdropStyle,
       backdropClassName,
@@ -295,14 +313,12 @@ const Modal = React.createClass({
 
     const backdropRef = ref => this.backdrop = ref;
 
-    let backdrop = (
-      <div
-        ref={backdropRef}
-        style={this.props.backdropStyle}
-        className={this.props.backdropClassName}
-        onClick={this.handleBackdropClick}
-      />
-    );
+    let backdrop = renderBackdrop({
+      ref: backdropRef,
+      style: backdropStyle,
+      className: backdropClassName,
+      onClick: this.handleBackdropClick,
+    });
 
     if (Transition) {
       backdrop = (
@@ -310,18 +326,13 @@ const Modal = React.createClass({
           in={this.props.show}
           timeout={backdropTransitionTimeout}
         >
-          {renderBackdrop({
-            ref: backdropRef,
-            style: backdropStyle,
-            className: backdropClassName,
-            onClick: this.handleBackdropClick
-          })}
+          {backdrop}
         </Transition>
       );
     }
 
     return backdrop;
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.show) {
@@ -330,19 +341,20 @@ const Modal = React.createClass({
       // Otherwise let handleHidden take care of marking exited.
       this.setState({exited: true});
     }
-  },
+  }
 
   componentWillUpdate(nextProps){
     if (!this.props.show && nextProps.show) {
       this.checkForFocus();
     }
-  },
+  }
 
   componentDidMount() {
+    this._isMounted = true;
     if (this.props.show) {
       this.onShow();
     }
-  },
+  }
 
   componentDidUpdate(prevProps) {
     let { transition } = this.props;
@@ -354,22 +366,24 @@ const Modal = React.createClass({
     else if (!prevProps.show && this.props.show) {
       this.onShow();
     }
-  },
+  }
 
   componentWillUnmount() {
     let { show, transition } = this.props;
 
+    this._isMounted = false;
+
     if (show || (transition && !this.state.exited)) {
       this.onHide();
     }
-  },
+  }
 
-  onShow() {
+  onShow = () => {
     let doc = ownerDocument(this);
     let container = getContainer(this.props.container, doc.body);
 
     this.props.manager.add(this, container, this.props.containerClassName);
-    
+
     this._onDocumentKeyupListener =
       addEventListener(doc, 'keyup', this.handleDocumentKeyUp);
 
@@ -381,32 +395,38 @@ const Modal = React.createClass({
    if (this.props.onShow) {
      this.props.onShow();
    }
-  },
+  }
 
-  onHide() {
+  onHide = () => {
     this.props.manager.remove(this);
 
     this._onDocumentKeyupListener.remove();
 
     this._onFocusinListener.remove();
 
-    this.restoreLastFocus();
-  },
+    if (this.props.restoreFocus) {
+      this.restoreLastFocus();
+    }
+  }
 
-  setMountNode(ref) {
+  setMountNode = (ref) => {
     this.mountNode = ref ? ref.getMountNode() : ref;
-  },
+  }
 
-  handleHidden(...args) {
+  setModalNode = (ref) => {
+    this.modalNode = ref;
+  }
+
+  handleHidden = (...args) => {
     this.setState({ exited: true });
     this.onHide();
 
     if (this.props.onExited) {
       this.props.onExited(...args);
     }
-  },
+  }
 
-  handleBackdropClick(e) {
+  handleBackdropClick = (e) => {
     if (e.target !== e.currentTarget) {
       return;
     }
@@ -418,24 +438,24 @@ const Modal = React.createClass({
     if (this.props.backdrop === true){
       this.props.onHide();
     }
-  },
+  }
 
-  handleDocumentKeyUp(e) {
+  handleDocumentKeyUp = (e) => {
     if (this.props.keyboard && e.keyCode === 27 && this.isTopModal()) {
       if (this.props.onEscapeKeyUp) {
         this.props.onEscapeKeyUp(e);
       }
       this.props.onHide();
     }
-  },
+  }
 
-  checkForFocus() {
+  checkForFocus = () => {
     if (canUseDom) {
       this.lastFocus = activeElement();
     }
-  },
+  }
 
-  focus() {
+  focus = () => {
     let autoFocus = this.props.autoFocus;
     let modalContent = this.getDialogElement();
     let current = activeElement(ownerDocument(this));
@@ -453,20 +473,20 @@ const Modal = React.createClass({
 
       modalContent.focus();
     }
-  },
+  }
 
-  restoreLastFocus() {
+  restoreLastFocus = () => {
     // Support: <=IE11 doesn't support `focus()` on svg elements (RB: #917)
     if (this.lastFocus && this.lastFocus.focus) {
       this.lastFocus.focus();
       this.lastFocus = null;
     }
-  },
+  }
 
-  enforceFocus() {
+  enforceFocus = () => {
     let { enforceFocus } = this.props;
 
-    if (!enforceFocus || !this.isMounted() || !this.isTopModal()) {
+    if (!enforceFocus || !this._isMounted || !this.isTopModal()) {
       return;
     }
 
@@ -476,19 +496,19 @@ const Modal = React.createClass({
     if (modal && modal !== active && !contains(modal, active)) {
       modal.focus();
     }
-  },
+  };
 
   //instead of a ref, which might conflict with one the parent applied.
-  getDialogElement() {
-    let node = this.refs.modal;
+  getDialogElement = () => {
+    let node = this.modalNode;
     return node && node.lastChild;
-  },
+  }
 
-  isTopModal() {
+  isTopModal = () => {
     return this.props.manager.isTopModal(this);
   }
 
-});
+}
 
 Modal.Manager = ModalManager;
 

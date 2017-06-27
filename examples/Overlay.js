@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import Overlay from 'react-overlays/Overlay';
 import Button from 'react-bootstrap/lib/Button';
+import Overlay from 'react-overlays/lib/Overlay';
 
 // Styles Mostly from Bootstrap
 const TooltipStyle = {
@@ -70,13 +70,11 @@ const ToolTip = props => {
   );
 };
 
-const OverlayExample = React.createClass({
+class OverlayExample extends React.Component {
 
-  getInitialState(){
-    return { show: false };
-  },
+  state = { show: false };
 
-  toggle(){
+  toggle = () => {
     let show = this.state.show;
     let placements = ['left', 'top', 'right', 'bottom'];
     let placement = this.state.placement;
@@ -92,13 +90,17 @@ const OverlayExample = React.createClass({
     }
 
     return this.setState({ show, placement });
-  },
+  }
 
   render(){
 
     return (
       <div className='overlay-example'>
-        <Button bsStyle='primary' ref='target' onClick={this.toggle}>
+        <Button
+          bsStyle='primary'
+          ref={(c) => { this.target = c; }}
+          onClick={this.toggle}
+        >
           I am an Overlay target
         </Button>
         <p>
@@ -110,15 +112,15 @@ const OverlayExample = React.createClass({
           onHide={() => this.setState({ show: false })}
           placement={this.state.placement}
           container={this}
-          target={ props => findDOMNode(this.refs.target)}
+          target={() => findDOMNode(this.target)}
         >
           <ToolTip>
-            I'm placed to the: <strong>{this.state.placement}</strong>
+            I&rsquo;m placed to the: <strong>{this.state.placement}</strong>
           </ToolTip>
         </Overlay>
       </div>
     );
   }
-});
+}
 
 export default OverlayExample;

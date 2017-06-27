@@ -1,7 +1,8 @@
 import getOffset from 'dom-helpers/query/offset';
 import requestAnimationFrame from 'dom-helpers/util/requestAnimationFrame';
+import PropTypes from 'prop-types';
+import componentOrElement from 'prop-types-extra/lib/componentOrElement';
 import React from 'react';
-import componentOrElement from 'react-prop-types/lib/componentOrElement';
 
 import Affix from './Affix';
 import addEventListener from './utils/addEventListener';
@@ -9,6 +10,31 @@ import getContainer from './utils/getContainer';
 import getDocumentHeight from './utils/getDocumentHeight';
 import ownerDocument from './utils/ownerDocument';
 import ownerWindow from './utils/ownerWindow';
+
+const displayName = 'AutoAffix';
+
+const propTypes = {
+  ...Affix.propTypes,
+  /**
+   * The logical container node or component for determining offset from bottom
+   * of viewport, or a function that returns it
+   */
+  container: PropTypes.oneOfType([
+    componentOrElement,
+    PropTypes.func
+  ]),
+  /**
+   * Automatically set width when affixed
+   */
+  autoWidth: PropTypes.bool
+};
+
+// This intentionally doesn't inherit default props from `<Affix>`, so that the
+// auto-calculated offsets can apply.
+const defaultProps = {
+  viewportOffsetTop: 0,
+  autoWidth: true
+};
 
 /**
  * The `<AutoAffix/>` component wraps `<Affix/>` to automatically calculate
@@ -69,26 +95,26 @@ class AutoAffix extends React.Component {
     }
   }
 
-  onWindowScroll() {
+  onWindowScroll = () => {
     this.onUpdate();
   }
 
-  onWindowResize() {
+  onWindowResize = () => {
     if (this.props.autoWidth) {
       requestAnimationFrame(() => this.onUpdate());
     }
   }
 
-  onDocumentClick() {
+  onDocumentClick = () => {
     requestAnimationFrame(() => this.onUpdate());
   }
 
-  onUpdate() {
+  onUpdate = () => {
     if (!this._isMounted) {
       return;
     }
 
-    const {top: offsetTop, width} = getOffset(this.refs.positioner);
+    const {top: offsetTop, width} = getOffset(this.positioner);
 
     const container = getContainer(this.props.container);
     let offsetBottom;
@@ -103,7 +129,7 @@ class AutoAffix extends React.Component {
     this.updateState(offsetTop, offsetBottom, width);
   }
 
-  updateState(offsetTop, offsetBottom, width) {
+  updateState = (offsetTop, offsetBottom, width) => {
     if (
       offsetTop === this.state.offsetTop &&
       offsetBottom === this.state.offsetBottom &&
@@ -131,7 +157,7 @@ class AutoAffix extends React.Component {
 
     return (
       <div>
-        <div ref="positioner" />
+        <div ref={(c) => { this.positioner = c; }} />
 
         <Affix
           {...props}
@@ -148,27 +174,8 @@ class AutoAffix extends React.Component {
   }
 }
 
-AutoAffix.propTypes = {
-  ...Affix.propTypes,
-  /**
-   * The logical container node or component for determining offset from bottom
-   * of viewport, or a function that returns it
-   */
-  container: React.PropTypes.oneOfType([
-    componentOrElement,
-    React.PropTypes.func
-  ]),
-  /**
-   * Automatically set width when affixed
-   */
-  autoWidth: React.PropTypes.bool
-};
-
-// This intentionally doesn't inherit default props from `<Affix>`, so that the
-// auto-calculated offsets can apply.
-AutoAffix.defaultProps = {
-  viewportOffsetTop: 0,
-  autoWidth: true
-};
+AutoAffix.displayName = displayName;
+AutoAffix.propTypes = propTypes;
+AutoAffix.defaultProps = defaultProps;
 
 export default AutoAffix;

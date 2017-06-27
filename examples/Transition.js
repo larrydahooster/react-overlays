@@ -1,6 +1,7 @@
 import React from 'react';
-import Transition from 'react-overlays/Transition';
 import Button from 'react-bootstrap/lib/Button';
+import Transition from 'react-overlays/lib/Transition';
+
 import injectCss from './injectCss';
 
 const FADE_DURATION = 200;
@@ -19,15 +20,13 @@ injectCss(`
 `);
 
 
-const TransitionExample = React.createClass({
+class TransitionExample extends React.Component {
 
-  getInitialState(){
-    return { in: true };
-  },
+  state = { in: true };
 
-  toggle(){
+  toggle = () => {
     return this.setState({ in: !this.state.in });
-  },
+  }
 
   render(){
 
@@ -57,6 +56,6 @@ const TransitionExample = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default TransitionExample;

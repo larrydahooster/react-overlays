@@ -1,9 +1,12 @@
 import contains from 'dom-helpers/query/contains';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import addEventListener from './utils/addEventListener';
 import ownerDocument from './utils/ownerDocument';
+
+const escapeKeyCode = 27;
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -13,7 +16,13 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-export default class RootCloseWrapper extends React.Component {
+/**
+ * The `<RootCloseWrapper/>` component registers your callback on the document
+ * when rendered. Powers the `<Overlay/>` component. This is used achieve modal
+ * style behavior where your callback is triggered when the user tries to
+ * interact with the rest of the document or hits the `esc` key.
+ */
+class RootCloseWrapper extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -40,7 +49,7 @@ export default class RootCloseWrapper extends React.Component {
     }
   }
 
-  addEventListeners() {
+  addEventListeners = () => {
     const { event } = this.props;
     const doc = ownerDocument(this);
 
@@ -57,7 +66,7 @@ export default class RootCloseWrapper extends React.Component {
       addEventListener(doc, 'keyup', this.handleKeyUp);
   }
 
-  removeEventListeners() {
+  removeEventListeners = () => {
     if (this.documentMouseCaptureListener) {
       this.documentMouseCaptureListener.remove();
     }
@@ -79,15 +88,15 @@ export default class RootCloseWrapper extends React.Component {
     );
   };
 
-  handleMouse = () => {
+  handleMouse = (e) => {
     if (!this.preventMouseRootClose && this.props.onRootClose) {
-      this.props.onRootClose();
+      this.props.onRootClose(e);
     }
   };
 
   handleKeyUp = (e) => {
-    if (e.keyCode === 27 && this.props.onRootClose) {
-      this.props.onRootClose();
+    if (e.keyCode === escapeKeyCode && this.props.onRootClose) {
+      this.props.onRootClose(e);
     }
   };
 
@@ -99,20 +108,26 @@ export default class RootCloseWrapper extends React.Component {
 RootCloseWrapper.displayName = 'RootCloseWrapper';
 
 RootCloseWrapper.propTypes = {
-  onRootClose: React.PropTypes.func,
-  children: React.PropTypes.element,
-
   /**
-   * Disable the the RootCloseWrapper, preventing it from triggering
-   * `onRootClose`.
+   * Callback fired after click or mousedown. Also triggers when user hits `esc`.
    */
-  disabled: React.PropTypes.bool,
+  onRootClose: PropTypes.func,
   /**
-   * Choose which document mouse event to bind to
+   * Children to render.
    */
-  event: React.PropTypes.oneOf(['click', 'mousedown'])
+  children: PropTypes.element,
+  /**
+   * Disable the the RootCloseWrapper, preventing it from triggering `onRootClose`.
+   */
+  disabled: PropTypes.bool,
+  /**
+   * Choose which document mouse event to bind to.
+   */
+  event: PropTypes.oneOf(['click', 'mousedown'])
 };
 
 RootCloseWrapper.defaultProps = {
   event: 'click'
 };
+
+export default RootCloseWrapper;

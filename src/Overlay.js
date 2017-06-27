@@ -1,8 +1,10 @@
+import PropTypes from 'prop-types';
+import elementType from 'prop-types-extra/lib/elementType';
 import React from 'react';
+
 import Portal from './Portal';
 import Position from './Position';
 import RootCloseWrapper from './RootCloseWrapper';
-import elementType from 'react-prop-types/lib/elementType';
 
 /**
  * Built on top of `<Position/>` and `<Portal/>`, the overlay component is great for custom tooltip overlays.
@@ -91,7 +93,7 @@ class Overlay extends React.Component {
     );
   }
 
-  handleHidden(...args) {
+  handleHidden = (...args) => {
     this.setState({exited: true});
 
     if (this.props.onExited) {
@@ -107,12 +109,12 @@ Overlay.propTypes = {
   /**
    * Set the visibility of the Overlay
    */
-  show: React.PropTypes.bool,
+  show: PropTypes.bool,
 
   /**
    * Specify whether the overlay should trigger `onHide` when the user clicks outside the overlay
    */
-  rootClose: React.PropTypes.bool,
+  rootClose: PropTypes.bool,
 
   /**
    * A Callback fired by the Overlay when it wishes to be hidden.
@@ -122,7 +124,7 @@ Overlay.propTypes = {
    * @type func
    */
   onHide(props, ...args) {
-    let propType = React.PropTypes.func;
+    let propType = PropTypes.func;
     if (props.rootClose) {
       propType = propType.isRequired;
     }
@@ -138,32 +140,32 @@ Overlay.propTypes = {
   /**
    * Callback fired before the Overlay transitions in
    */
-  onEnter: React.PropTypes.func,
+  onEnter: PropTypes.func,
 
   /**
    * Callback fired as the Overlay begins to transition in
    */
-  onEntering: React.PropTypes.func,
+  onEntering: PropTypes.func,
 
   /**
    * Callback fired after the Overlay finishes transitioning in
    */
-  onEntered: React.PropTypes.func,
+  onEntered: PropTypes.func,
 
   /**
    * Callback fired right before the Overlay transitions out
    */
-  onExit: React.PropTypes.func,
+  onExit: PropTypes.func,
 
   /**
    * Callback fired as the Overlay begins to transition out
    */
-  onExiting: React.PropTypes.func,
+  onExiting: PropTypes.func,
 
   /**
    * Callback fired after the Overlay finishes transitioning out
    */
-  onExited: React.PropTypes.func
+  onExited: PropTypes.func
 };
 
 

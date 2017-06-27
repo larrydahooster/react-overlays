@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
-import Modal from 'react-overlays/Modal';
+import Modal from 'react-overlays/lib/Modal';
 
 let rand = ()=> (Math.floor(Math.random() * 20) - 10);
 
@@ -36,11 +36,9 @@ const dialogStyle = function() {
 };
 
 
-const ModalExample = React.createClass({
+class ModalExample extends React.Component {
 
-  getInitialState(){
-    return { showModal: false };
-  },
+  state = { showModal: false };
 
   render() {
 
@@ -66,15 +64,15 @@ const ModalExample = React.createClass({
         </Modal>
       </div>
     );
-  },
+  }
 
-  close(){
+  close = () => {
     this.setState({ showModal: false });
-  },
+  }
 
-  open(){
+  open = () => {
     this.setState({ showModal: true });
   }
-});
+}
 
 export default ModalExample;

@@ -1,8 +1,10 @@
-import css from 'dom-helpers/style';
 import classes from 'dom-helpers/class';
+import css from 'dom-helpers/style';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
+
 import isOverflowing from './utils/isOverflowing';
-import { hideSiblings, showSiblings, ariaHidden } from './utils/manageAriaHidden';
+import { ariaHidden, hideSiblings, showSiblings }
+  from './utils/manageAriaHidden';
 
 function findIndexOf(arr, cb){
   let idx = -1;
@@ -61,7 +63,7 @@ class ModalManager {
     this.data = [];
   }
 
-  add(modal, container, className) {
+  add = (modal, container, className) => {
     let modalIdx = this.modals.indexOf(modal);
     let containerIdx = this.containers.indexOf(container);
 
@@ -102,7 +104,7 @@ class ModalManager {
     return modalIdx;
   }
 
-  remove(modal){
+  remove = (modal) => {
     let modalIdx = this.modals.indexOf(modal);
 
     if (modalIdx === -1) {
@@ -140,7 +142,7 @@ class ModalManager {
     }
   }
 
-  isTopModal(modal) {
+  isTopModal = (modal) => {
     return !!this.modals.length
         && this.modals[this.modals.length - 1] === modal;
   }

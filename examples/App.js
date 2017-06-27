@@ -1,7 +1,8 @@
+import Playground from '@monastic.panic/component-playground/Playground';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM, { findDOMNode } from 'react-dom';
 import Button from 'react-bootstrap/lib/Button';
-import Playground from '@monastic.panic/component-playground/Playground';
 
 import PropTable from './PropTable';
 
@@ -10,14 +11,16 @@ import ModalExample from '../webpack/example-loader!./Modal';
 import OverlaySource from '../webpack/example-loader!./Overlay';
 import PortalSource from '../webpack/example-loader!./Portal';
 import PositionSource from '../webpack/example-loader!./Position';
+import RootCloseWrapperSource from '../webpack/example-loader!./RootCloseWrapper';
 import TransitionSource from '../webpack/example-loader!./Transition';
 
 import AffixMetadata from 'component-metadata-loader?pitch!react-overlays/Affix';
 import AutoAffixMetadata from 'component-metadata-loader?pitch!react-overlays/AutoAffix';
+import ModalMetadata from 'component-metadata-loader?pitch!react-overlays/Modal';
+import OverlayMetadata from 'component-metadata-loader?pitch!react-overlays/Overlay';
 import PortalMetadata from 'component-metadata-loader?pitch!react-overlays/Portal';
 import PositionMetadata from 'component-metadata-loader?pitch!react-overlays/Position';
-import OverlayMetadata from 'component-metadata-loader?pitch!react-overlays/Overlay';
-import ModalMetadata from 'component-metadata-loader?pitch!react-overlays/Modal';
+import RootCloseWrapperMetadata from 'component-metadata-loader?pitch!react-overlays/RootCloseWrapper';
 import TransitionMetadata from 'component-metadata-loader?pitch!react-overlays/Transition';
 
 import * as ReactOverlays from 'react-overlays';
@@ -30,10 +33,11 @@ const scope = {
   React, ReactDOM, findDOMNode, Button, injectCss, ...ReactOverlays, getOffset
 };
 
-const Anchor = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string
-  },
+class Anchor extends React.Component {
+  static propTypes = {
+    id: PropTypes.string
+  };
+
   render() {
     let id = this.props.id || this.props.children.toLowerCase().replace(/\s+/gi, '_');
 
@@ -44,12 +48,13 @@ const Anchor = React.createClass({
       </a>
     );
   }
-});
+}
 
-const ExampleEditor = React.createClass({
-  propTypes: {
-    codeText: React.PropTypes.string
-  },
+class ExampleEditor extends React.Component {
+  static propTypes = {
+    codeText: PropTypes.string
+  };
+
   render() {
     return (
       <Playground
@@ -66,9 +71,9 @@ const ExampleEditor = React.createClass({
       />
     );
   }
-});
+}
 
-const Example = React.createClass({
+class Example extends React.Component {
 
   render() {
 
@@ -82,6 +87,7 @@ const Example = React.createClass({
             <li><a href='#position'>Position</a></li>
             <li><a href='#overlay'>Overlay</a></li>
             <li><a href='#affixes'>Affixes</a></li>
+            <li><a href='#root-close-wrapper'>RootCloseWrapper</a></li>
           </ul>
         </article>
         <main className='col-md-10'>
@@ -156,10 +162,21 @@ const Example = React.createClass({
               metadata={AutoAffixMetadata}
             />
           </section>
+          <section>
+            <h2 className='page-header'>
+              <Anchor id='root-close-wrapper'>RootCloseWrapper</Anchor>
+            </h2>
+            <p dangerouslySetInnerHTML={{__html: RootCloseWrapperMetadata.RootCloseWrapper.descHtml }}/>
+            <ExampleEditor codeText={RootCloseWrapperSource} />
+            <PropTable
+              component='RootCloseWrapper'
+              metadata={RootCloseWrapperMetadata}
+            />
+          </section>
         </main>
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<Example/>, document.getElementById('app-container'));

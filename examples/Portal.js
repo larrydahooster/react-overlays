@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
-import Portal from 'react-overlays/Portal';
+import Portal from 'react-overlays/lib/Portal';
 
 class PortalExample extends React.Component {
 
@@ -26,14 +26,14 @@ class PortalExample extends React.Component {
           <div className='panel-body'>
             <span>It looks like I will render here.</span>
 
-            <Portal container={()=> this.refs.container}>
+            <Portal container={() => this.container}>
               { this.state.show && child }
             </Portal>
           </div>
         </div>
 
         <div className='panel panel-default'>
-          <div ref='container' className='panel-body'/>
+          <div ref={(c) => { this.container = c; }} className='panel-body'/>
         </div>
       </div>
     );

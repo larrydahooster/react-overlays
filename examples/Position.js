@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import Position from 'react-overlays/Position';
 import Button from 'react-bootstrap/lib/Button';
+import Position from 'react-overlays/lib/Position';
 
 
 const OverlayStyle = {
@@ -53,27 +53,29 @@ const ToolTip = props => {
   );
 };
 
-const PositionExample = React.createClass({
+class PositionExample extends React.Component {
 
-  getInitialState(){
-    return { placement: 'left' };
-  },
+  state = { placement: 'left' };
 
-  toggle(){
+  toggle = () => {
     let placements = ['left', 'top', 'right', 'bottom'];
     let placement = this.state.placement;
 
     placement = placements[placements.indexOf(placement) + 1] || placements[0];
 
     return this.setState({ placement });
-  },
+  }
 
   render(){
 
     return (
       <div className='overlay-example'>
-        <Button bsStyle='primary' ref='target' onClick={this.toggle}>
-          I am an Position target
+        <Button
+          bsStyle='primary'
+          ref={(c) => { this.target = c; }}
+          onClick={this.toggle}
+        >
+          I am a Position target
         </Button>
         <p>
           keep clicking to see the placement change
@@ -82,7 +84,7 @@ const PositionExample = React.createClass({
         <Position
           container={this}
           placement={this.state.placement}
-          target={props => findDOMNode(this.refs.target)}
+          target={() => findDOMNode(this.target)}
         >
           <ToolTip>
             I'm placed to the: <strong>{this.state.placement}</strong>
@@ -91,6 +93,6 @@ const PositionExample = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default PositionExample;
