@@ -57,6 +57,7 @@ class ModalExample extends React.Component {
           onHide={this.close}
         >
           <div style={dialogStyle()} >
+            <input type="text" autoFocus />
             <h4 id='modal-label'>Text in a modal</h4>
             <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
             <ModalExample/>
